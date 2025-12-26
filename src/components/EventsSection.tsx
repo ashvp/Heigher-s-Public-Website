@@ -25,6 +25,25 @@ const events = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.5 }
+  },
+};
+
 export function EventsSection() {
   const { ref, isVisible } = useScrollAnimation();
 
@@ -51,28 +70,63 @@ export function EventsSection() {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isVisible ? "visible" : "hidden"}
+        >
           {events.map((event, index) => (
             <motion.div
               key={event.name}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-              className="group p-6 bg-card border border-border rounded-lg card-hover"
+              variants={cardVariants}
+              custom={index}
+              whileHover={{ 
+                scale: 1.02, 
+                x: 10,
+                transition: { duration: 0.2 }
+              }}
+              className="group p-6 bg-card border border-border rounded-lg card-hover relative overflow-hidden"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+              {/* Animated border glow */}
+              <motion.div 
+                className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: 'linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent)',
+                }}
+                animate={{
+                  x: ['-100%', '100%'],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatDelay: 0.5,
+                }}
+              />
+              
+              <div className="flex items-start gap-4 relative z-10">
+                <motion.div 
+                  className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors"
+                  whileHover={{ rotate: 10 }}
+                >
                   <Calendar className="w-6 h-6 text-primary" />
-                </div>
+                </motion.div>
                 <div>
-                  <span className="text-accent text-xs uppercase tracking-wider">{event.date}</span>
-                  <h3 className="font-heading font-bold text-lg mt-1 mb-2">{event.name}</h3>
+                  <motion.span 
+                    className="text-accent text-xs uppercase tracking-wider"
+                    initial={{ opacity: 0 }}
+                    animate={isVisible ? { opacity: 1 } : {}}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                  >
+                    {event.date}
+                  </motion.span>
+                  <h3 className="font-heading font-bold text-lg mt-1 mb-2 group-hover:text-primary transition-colors">{event.name}</h3>
                   <p className="text-muted-foreground text-sm">{event.description}</p>
                 </div>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

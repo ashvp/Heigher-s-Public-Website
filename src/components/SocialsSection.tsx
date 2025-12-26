@@ -3,9 +3,9 @@ import { Instagram, Youtube, MessageCircle } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const socials = [
-  { name: 'Instagram', icon: Instagram, href: '#', color: 'hover:text-primary hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]' },
-  { name: 'Discord', icon: MessageCircle, href: '#', color: 'hover:text-accent hover:shadow-[0_0_30px_hsl(var(--accent)/0.4)]' },
-  { name: 'YouTube', icon: Youtube, href: '#', color: 'hover:text-primary hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]' },
+  { name: 'Instagram', icon: Instagram, color: 'group-hover:text-primary group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]' },
+  { name: 'Discord', icon: MessageCircle, color: 'group-hover:text-accent group-hover:shadow-[0_0_30px_hsl(var(--accent)/0.4)]' },
+  { name: 'YouTube', icon: Youtube, color: 'group-hover:text-primary group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]' },
 ];
 
 export function SocialsSection() {
@@ -40,15 +40,29 @@ export function SocialsSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex justify-center gap-8"
         >
-          {socials.map((social) => (
-            <a
+          {socials.map((social, index) => (
+            <motion.a
               key={social.name}
-              href={social.href}
-              className={`w-16 h-16 md:w-20 md:h-20 bg-card border border-border rounded-xl flex items-center justify-center text-muted-foreground transition-all duration-300 ${social.color}`}
+              href="#"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+              transition={{ 
+                duration: 0.5, 
+                delay: 0.3 + index * 0.1,
+                type: "spring",
+                stiffness: 200
+              }}
+              whileHover={{ 
+                scale: 1.2, 
+                rotate: [0, -10, 10, 0],
+                transition: { duration: 0.3 }
+              }}
+              whileTap={{ scale: 0.9 }}
+              className={`group w-16 h-16 md:w-20 md:h-20 bg-card border border-border rounded-xl flex items-center justify-center text-muted-foreground transition-all duration-300 ${social.color}`}
               aria-label={social.name}
             >
               <social.icon className="w-7 h-7 md:w-8 md:h-8" />
-            </a>
+            </motion.a>
           ))}
         </motion.div>
       </div>

@@ -25,6 +25,26 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50, rotateX: -15 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    rotateX: 0,
+    transition: { duration: 0.6 }
+  },
+};
+
 export function WhatWeDoSection() {
   const { ref, isVisible } = useScrollAnimation();
 
@@ -51,23 +71,39 @@ export function WhatWeDoSection() {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate={isVisible ? "visible" : "hidden"}
+        >
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-              className="group p-6 bg-card border border-border rounded-lg card-hover"
+              variants={cardVariants}
+              whileHover={{ 
+                y: -10, 
+                scale: 1.02,
+                transition: { duration: 0.3 }
+              }}
+              className="group p-6 bg-card border border-border rounded-lg card-hover relative overflow-hidden"
             >
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer" 
+                style={{ backgroundSize: '200% 100%' }} 
+              />
+              
+              <motion.div 
+                className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors relative z-10"
+                whileHover={{ rotate: 10, scale: 1.1 }}
+              >
                 <feature.icon className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-heading font-bold text-xl mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+              </motion.div>
+              <h3 className="font-heading font-bold text-xl mb-3 relative z-10">{feature.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed relative z-10">{feature.description}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
