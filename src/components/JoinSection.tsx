@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function JoinSection() {
   const { ref, isVisible } = useScrollAnimation();
@@ -48,10 +49,10 @@ export function JoinSection() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Button variant="default" size="xl" className="group" asChild>
-              <a href="https://url.heighers.in/membership" target="_blank" rel="noopener noreferrer">
+              <Link to="/register">
                 Apply Now
                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
             </Button>
           </motion.div>
         </div>
