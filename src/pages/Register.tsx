@@ -1,10 +1,12 @@
 import { useState } from "react";
 import "../styles/register.css";
 import { registerUser } from "@/lib/api";
+import { useNavigate} from "react-router-dom";
 
 const emailRegex = /^[0-9]{2}f[0-9]{7}@ds\.study\.iitm\.ac\.in$/;
 
 export default function Register() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<any>({
     full_name: "",
     age: "",
@@ -54,6 +56,7 @@ export default function Register() {
   };
 
   const submit = async () => {
+    console.log("Clicked submit button");
     if (!validate()) {
       document
         .querySelector(".error, .warning")
@@ -64,6 +67,7 @@ export default function Register() {
     try {
       await registerUser(form);
       alert("Registration successful!");
+      navigate("/");
     } catch (err: any) {
       alert(err?.message || "Submission failed");
     }
@@ -161,27 +165,27 @@ const [houseOpen, setHouseOpen] = useState(false);
 
           <div className="option-group">
             <label className="option">
-              <input type="radio" name="education" />
+              <input type="radio" name="education"  onChange={() => update("education", "IITM BS")} />
               <span>IITM BS</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="education" />
+              <input type="radio" name="education"  onChange={() => update("education", "IITM BS + Other Degree")} />
               <span>IITM BS + Other Degree</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="education" />
+              <input type="radio" name="education"  onChange={() => update("education", "IITM On-campus")} />
               <span>IITM On-campus</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="education" />
+              <input type="radio" name="education"  onChange={() => update("education", "Working Professional")} />
               <span>Working Professional</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="education" />
+              <input type="radio" name="education" onChange={() => update("education", "Other")} />
               <span>Other</span>
             </label>
             
@@ -209,7 +213,7 @@ const [houseOpen, setHouseOpen] = useState(false);
             {["Foundation", "Diploma", "Degree", "BS", "Other"].map(
               (level) => (
                 <label key={level} className="option">
-                  <input type="radio" name="level" />
+                  <input type="radio" name="level" onChange={() => update("level", level)}/>
                   <span>{level}</span>
                 </label>
               )
@@ -266,13 +270,22 @@ const [houseOpen, setHouseOpen] = useState(false);
             {["BGMI", "Brawl Stars","Call of Duty Mobile","Clash Of Clans","Clash Royale","Free Fire","Scribbl.io","Smash Karts","Rocket League","Stumble/Fall Guys","Valorant","Other"].map(
               (game) => (
                 <label key={game} className="option">
-                  <input type="checkbox" />
+                  <input type="checkbox" onChange={(e) => {
+    if (e.target.checked) {
+      update("games", [...form.games, game]);
+    } else {
+      update(
+        "games",
+        form.games.filter((g: string) => g !== game)
+      );
+    }
+  }}/>
                   <span>{game}</span>
                 </label>
               )
             )}
           </div>
-          {form.games === "Other" && (
+          {form.games.includes("Other") && (
             <input
               className="input"
               placeholder="Specify"
@@ -292,12 +305,12 @@ const [houseOpen, setHouseOpen] = useState(false);
 
           <div className="option-group">
             <label className="option">
-              <input type="radio" name="volunteer" />
+              <input type="radio" name="volunteer" onChange={() => update("volunteer", "Yes")}/>
               <span>Yes</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="volunteer" />
+              <input type="radio" name="volunteer" onChange={() => update("volunteer", "No")}/>
               <span>No</span>
             </label>
           </div>
