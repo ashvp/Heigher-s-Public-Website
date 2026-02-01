@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/register.css";
 import { registerUser } from "@/lib/api";
-import { useNavigate} from "react-router-dom";
-import { useEffect,useRef } from "react";
-
-
-
+import { useNavigate } from "react-router-dom";
+import { auth, googleProvider } from "@/lib/firebase";
+import { signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
 
 const emailRegex = /^[^\s@]+@([a-z0-9-]+\.)*iitm\.ac\.in$/i;
 
 export default function Register() {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [form, setForm] = useState<any>({
     full_name: "",
     age: "",
@@ -29,10 +30,67 @@ export default function Register() {
     suggestions: "",
     acknowledged: false,
   });
-  
 
   const [errors, setErrors] = useState<any>({});
   const update = (k: string, v: any) => setForm({ ...form, [k]: v });
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setLoading(false);
+      if (currentUser) {
+        if (!emailRegex.test(currentUser.email || "")) {
+          alert("Please sign in with your IITM student email (@*.iitm.ac.in).");
+          signOut(auth);
+          return;
+        }
+        setUser(currentUser);
+        // Pre-fill form
+        setForm((prev: any) => ({
+          ...prev,
+          full_name: currentUser.displayName || "",
+          email: currentUser.email || "",
+        }));
+      } else {
+        setUser(null);
+      }
+    }, (error) => {
+      console.error("Auth State Error:", error);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error: any) {
+      console.error("Login failed", error);
+      alert("Login failed: " + error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setForm({
+      full_name: "",
+      age: "",
+      gender: "",
+      gender_other: "",
+      email: "",
+      whatsapp: "",
+      alternate: "",
+      discord: "",
+      education: "",
+      education_other: "",
+      level: "",
+      house: "",
+      games: [],
+      volunteer: "",
+      suggestions: "",
+      acknowledged: false,
+    });
+  };
 
   const validate = () => {
     const e: any = {};
@@ -42,8 +100,9 @@ export default function Register() {
     if (!form.gender) e.gender = "Select gender";
     if (form.gender === "Other" && !form.gender_other)
       e.gender_other = "Please specify";
-    if (!emailRegex.test(form.email))
-      e.email = "Use IITM email ";
+    // Email is validated by Auth, but double check
+    if (!form.email || !emailRegex.test(form.email))
+      e.email = "Invalid IITM email";
     if (!form.whatsapp) e.whatsapp = "WhatsApp number required";
     if (!form.education) e.education = "Select education status";
     if (form.education === "Other" && !form.education_other)
@@ -63,68 +122,93 @@ export default function Register() {
   };
 
   const submit = async () => {
-    
+    if (!user) {
+      alert("You must be signed in to register.");
+      return;
+    }
+
     if (!validate()) {
       document
         .querySelector(".error, .warning")
         ?.scrollIntoView({ behavior: "smooth" });
       return;
     }
+
     const payload = {
-  name: form.full_name,
-  age: Number(form.age),
-  gender: form.gender === "Other" ? form.gender_other : form.gender,
-
-  phone_number: form.whatsapp,
-  alternate_phone_number: form.alternate || null,
-
-  email: form.email,
-
-  // Auth not implemented yet
-  firebase_uid: "",
-
-  // Discord is optional
-  ...(form.discord && { discord_id: form.discord }),
-
-  professional_info: {
-    education_status: form.education,
-    other_college_name:
-      form.education === "Other" ? form.education_other : "",
-    current_level_in_IITM: form.level==="Other" ? form.level_other : form.level,
-    
-  },
-
-  hostel_info: {
-    house_name: form.house,
-  },
-
-  additional_info: {
-    willing_to_volunteer: form.volunteer === "yes",
-    suggestions: form.suggestions || "",
-    accepted_terms: form.acknowledged,
-  },
-
-  games: form.games,
-};
+      name: form.full_name,
+      age: Number(form.age),
+      gender: form.gender === "Other" ? form.gender_other : form.gender,
+      phone_number: form.whatsapp,
+      alternate_phone_number: form.alternate || null,
+      email: form.email,
+      firebase_uid: user.uid, // Use actual UID from Auth
+      ...(form.discord && { discord_id: form.discord }),
+      professional_info: {
+        education_status: form.education,
+        other_college_name:
+          form.education === "Other" ? form.education_other : "",
+        current_level_in_IITM: form.level === "Other" ? form.level_other : form.level,
+        house_name: form.house,
+      },
+      additional_info: {
+        willing_to_volunteer: form.volunteer === "yes",
+        suggestions: form.suggestions || "",
+        accepted_terms: form.acknowledged,
+      },
+      games: form.games,
+    };
 
     try {
       await registerUser(payload);
       alert("Registration successful!");
       navigate("/");
     } catch (err: any) {
+      console.error(err);
       alert(err?.message || "Submission failed");
     }
   };
-const [houseOpen, setHouseOpen] = useState(false);
+
+  const [houseOpen, setHouseOpen] = useState(false);
+
+  if (loading) return <div className="register-page"><div className="form-wrapper">Loading...</div></div>;
+
+  if (!user) {
+    return (
+      <div className="register-page flex items-center justify-center min-h-[60vh]">
+        <div className="form-wrapper text-center flex flex-col items-center max-w-md w-full p-8">
+          <h1 className="form-title">
+            Heighers eSports Society <span>Membership</span>
+          </h1>
+          <p className="form-sub mb-8 text-muted-foreground">
+            Please sign in with your IITM Student Email to continue.
+          </p>
+          <button 
+            className="submit-btn flex items-center justify-center gap-3 w-full max-w-xs hover:scale-105 transition-transform duration-200" 
+            onClick={handleGoogleLogin}
+          >
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 bg-white rounded-full p-0.5" />
+            Sign in with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="register-page">
       <div className="form-wrapper">
-        <h1 className="form-title">
-          Heighers eSports Society <span>Membership Form</span>
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="form-title mb-0">
+            Heighers eSports <span>Membership</span>
+          </h1>
+          <button onClick={handleLogout} className="text-sm text-red-400 hover:underline">
+            Sign Out
+          </button>
+        </div>
+        
         <p className="form-sub">
-          Fill this form to become a member of Heighers eSports Club, IITM BS.
-          
+          Welcome, <strong>{user.displayName}</strong>! <br/>
+          Fill this form to become a member of Heighers eSports Club.
         </p>
         <p className="form-link">Our Socials: <a href=" https://linktr.ee/heighers.esports_iitm">https://linktr.ee/heighers.esports_iitm</a></p>
         <p className="required-note">* Indicates required question</p>
@@ -134,6 +218,7 @@ const [houseOpen, setHouseOpen] = useState(false);
           <div className="label">Full Name *</div>
           <input
             className={`input ${errors.full_name && "warning"}`}
+            value={form.full_name}
             onChange={(e) => update("full_name", e.target.value)}
           />
           {errors.full_name && (
@@ -144,6 +229,7 @@ const [houseOpen, setHouseOpen] = useState(false);
           <input
             className={`input ${errors.age && "warning"}`}
             type="number"
+            value={form.age}
             onChange={(e) => update("age", e.target.value)}
           />
 
@@ -154,6 +240,7 @@ const [houseOpen, setHouseOpen] = useState(false);
                 <input
                   type="radio"
                   name="gender"
+                  checked={form.gender === g}
                   onChange={() => update("gender", g)}
                 />{" "}
                 {g}
@@ -165,6 +252,7 @@ const [houseOpen, setHouseOpen] = useState(false);
             <input
               className="input"
               placeholder="Specify"
+              value={form.gender_other}
               onChange={(e) =>
                 update("gender_other", e.target.value)
               }
@@ -176,28 +264,31 @@ const [houseOpen, setHouseOpen] = useState(false);
         <div className="form-card">
           <div className="label">Email *</div>
           <input
-            className={`input ${errors.email && "error"}`}
-            onChange={(e) => update("email", e.target.value)}
+            className="input disabled"
+            value={form.email}
+            disabled
+            title="Signed in via Google"
           />
-          {errors.email && (
-            <p className="error-text">{errors.email}</p>
-          )}
+          <p className="text-xs text-muted-foreground mt-1"> verified via Google</p>
 
           <div className="label">WhatsApp Number *</div>
           <input
             className={`input ${errors.whatsapp && "warning"}`}
+            value={form.whatsapp}
             onChange={(e) => update("whatsapp", e.target.value)}
           />
 
           <div className="label">Alternate Number</div>
           <input
             className="input"
+            value={form.alternate}
             onChange={(e) => update("alternate", e.target.value)}
           />
 
           <div className="label">Discord ID </div>
           <input
             className={`input ${errors.discord && "warning"}`}
+            value={form.discord}
             onChange={(e) => update("discord", e.target.value)}
           />
         </div>
@@ -207,43 +298,28 @@ const [houseOpen, setHouseOpen] = useState(false);
           <div className="label">Education Status *</div>
 
           <div className="option-group">
-            <label className="option">
-              <input type="radio" name="education"  onChange={() => update("education", "IITM BS")} />
-              <span>IITM BS</span>
-            </label>
-
-            <label className="option">
-              <input type="radio" name="education"  onChange={() => update("education", "IITM BS + Other Degree")} />
-              <span>IITM BS + Other Degree</span>
-            </label>
-
-            <label className="option">
-              <input type="radio" name="education"  onChange={() => update("education", "IITM On-campus")} />
-              <span>IITM On-campus</span>
-            </label>
-
-            <label className="option">
-              <input type="radio" name="education"  onChange={() => update("education", "Working Professional")} />
-              <span>Working Professional</span>
-            </label>
-
-            <label className="option">
-              <input type="radio" name="education" onChange={() => update("education", "Other")} />
-              <span>Other</span>
-            </label>
-            
+            {["IITM BS", "IITM BS + Other Degree", "IITM On-campus", "Working Professional", "Other"].map(opt => (
+               <label key={opt} className="option">
+               <input 
+                 type="radio" 
+                 name="education" 
+                 checked={form.education === opt}
+                 onChange={() => update("education", opt)} 
+               />
+               <span>{opt}</span>
+             </label>
+            ))}
           </div>
           {form.education === "Other" && (
             <input
               className="input"
               placeholder="Specify"
+              value={form.education_other}
               onChange={(e) =>
                 update("education_other", e.target.value)
               }
             />
           )}
-
-
         </div>
 
         {/* CURRENT IITM LEVEL */}
@@ -256,26 +332,31 @@ const [houseOpen, setHouseOpen] = useState(false);
             {["Foundation", "Diploma", "Degree", "BS", "Other"].map(
               (level) => (
                 <label key={level} className="option">
-                  <input type="radio" name="level" onChange={() => update("level", level)}/>
+                  <input 
+                    type="radio" 
+                    name="level" 
+                    checked={form.level === level}
+                    onChange={() => update("level", level)}
+                  />
                   <span>{level}</span>
                 </label>
               )
             )}
           </div>
-{form.level === "Other" && (
-  <>
-    <input
-      type="text"
-      className="input"
-      placeholder="Specify your IITM level"
-      value={form.level_other}
-      onChange={(e) => update("level_other", e.target.value)}
-    />
-    {errors.level_other && (
-      <p className="warning-text">{errors.level_other}</p>
-    )}
-  </>
-)}
+          {form.level === "Other" && (
+            <>
+              <input
+                type="text"
+                className="input"
+                placeholder="Specify your IITM level"
+                value={form.level_other}
+                onChange={(e) => update("level_other", e.target.value)}
+              />
+              {errors.level_other && (
+                <p className="warning-text">{errors.level_other}</p>
+              )}
+            </>
+          )}
 
           {errors.level && (
             <p className="warning-text">{errors.level}</p>
@@ -285,37 +366,37 @@ const [houseOpen, setHouseOpen] = useState(false);
         {/* HOUSE */}
        
         <div className="form-card">
-  <div className="label">House *</div>
-<p className="form-sub">FIll up below form to know your House and then choose accordingly. </p>
-<p className="form-link">Form Link<a href="https://forms.gle/nPNwKNwDyFXbquJL9">https://forms.gle/nPNwKNwDyFXbquJL9</a></p>
-  <div
-    className="custom-select"
-    onClick={() => setHouseOpen(!houseOpen)}
-  >
-    {form.house || "Select House"}
-  </div>
+          <div className="label">House *</div>
+          <p className="form-sub">Fill up below form to know your House and then choose accordingly. </p>
+          <p className="form-link">Form Link: <a href="https://forms.gle/nPNwKNwDyFXbquJL9" target="_blank" rel="noreferrer">https://forms.gle/nPNwKNwDyFXbquJL9</a></p>
+          <div
+            className="custom-select"
+            onClick={() => setHouseOpen(!houseOpen)}
+          >
+            {form.house || "Select House"}
+          </div>
 
-  {houseOpen && (
-    <div className="custom-options">
-      {["Bandipur","Corbett","Gir","Kanha","Kaziranga","Namdapha","Nallamala","Nilgiri","Pichavaram","Wayand","Sundarban","Saranda","House not allotted yet","Not Applicable"].map(h => (
-        <div
-          key={h}
-          className="custom-option"
-          onClick={() => {
-            update("house", h);
-            setHouseOpen(false);
-          }}
-        >
-          {h}
+          {houseOpen && (
+            <div className="custom-options">
+              {["Bandipur","Corbett","Gir","Kanha","Kaziranga","Namdapha","Nallamala","Nilgiri","Pichavaram","Wayand","Sundarban","Saranda","House not allotted yet","Not Applicable"].map(h => (
+                <div
+                  key={h}
+                  className="custom-option"
+                  onClick={() => {
+                    update("house", h);
+                    setHouseOpen(false);
+                  }}
+                >
+                  {h}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {errors.house && (
+            <p className="warning-text">{errors.house}</p>
+          )}
         </div>
-      ))}
-    </div>
-  )}
-
-  {errors.house && (
-    <p className="warning-text">{errors.house}</p>
-  )}
-</div>
 
         {/* GAMES */}
         <div className="form-card">
@@ -327,16 +408,20 @@ const [houseOpen, setHouseOpen] = useState(false);
             {["BGMI", "Brawl Stars","Call of Duty Mobile","Clash Of Clans","Clash Royale","Free Fire","Scribbl.io","Smash Karts","Rocket League","Stumble/Fall Guys","Valorant","Other"].map(
               (game) => (
                 <label key={game} className="option">
-                  <input type="checkbox" onChange={(e) => {
-    if (e.target.checked) {
-      update("games", [...form.games, game]);
-    } else {
-      update(
-        "games",
-        form.games.filter((g: string) => g !== game)
-      );
-    }
-  }}/>
+                  <input 
+                    type="checkbox" 
+                    checked={form.games.includes(game)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        update("games", [...form.games, game]);
+                      } else {
+                        update(
+                          "games",
+                          form.games.filter((g: string) => g !== game)
+                        );
+                      }
+                    }}
+                  />
                   <span>{game}</span>
                 </label>
               )
@@ -362,12 +447,22 @@ const [houseOpen, setHouseOpen] = useState(false);
 
           <div className="option-group">
             <label className="option">
-              <input type="radio" name="volunteer" onChange={() => update("volunteer", "yes")}/>
+              <input 
+                type="radio" 
+                name="volunteer" 
+                checked={form.volunteer === "yes"}
+                onChange={() => update("volunteer", "yes")}
+              />
               <span>Yes</span>
             </label>
 
             <label className="option">
-              <input type="radio" name="volunteer" onChange={() => update("volunteer", "no")}/>
+              <input 
+                type="radio" 
+                name="volunteer" 
+                checked={form.volunteer === "no"}
+                onChange={() => update("volunteer", "no")}
+              />
               <span>No</span>
             </label>
           </div>
@@ -378,6 +473,7 @@ const [houseOpen, setHouseOpen] = useState(false);
           <textarea
             className="input"
             rows={3}
+            value={form.suggestions}
             onChange={(e) =>
               update("suggestions", e.target.value)
             }
@@ -389,10 +485,11 @@ const [houseOpen, setHouseOpen] = useState(false);
           <div className="label">
             ACKNOWLEDGEMENT<span className="required">*</span>
           </div>
-          <p className="form-link">Heighers Code of Conduct: <a href="https://bit.ly/he-code-of-conduct">https://bit.ly/he-code-of-conduct</a></p>
+          <p className="form-link">Heighers Code of Conduct: <a href="https://bit.ly/he-code-of-conduct" target="_blank" rel="noreferrer">https://bit.ly/he-code-of-conduct</a></p>
           <label>
             <input
               type="checkbox"
+              checked={form.acknowledged}
               onChange={(e) =>
                 update("acknowledged", e.target.checked)
               }
@@ -402,7 +499,7 @@ const [houseOpen, setHouseOpen] = useState(false);
         </div>
 
         <button className="submit-btn" onClick={submit}>
-          Submit
+          Submit Registration
         </button>
       </div>
     </div>
