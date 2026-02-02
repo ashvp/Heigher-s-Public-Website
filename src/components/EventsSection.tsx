@@ -5,25 +5,25 @@ import BounceCards from './BounceCards';
 
 const events = [
   {
-    name: 'Aarambh',
+    name: 'Aarambh Series',
     date: 'January',
     description: 'Major gaming event including competitive and fun games during winter.',
     details:'',
   },
   {
-    name: 'Ranneeti',
+    name: 'Ranneeti Series',
     date: 'May',
-    description: 'Major offline esports event exclusive for IITM BS students.',
+    description: 'Major offline eSports event exclusive for IITM BS students, during summer.',
     details:'',
   },
   {
-    name: 'Spectrum',
+    name: 'Spectrum Series',
     date: 'July',
-    description: 'Major esports event for participants across IITM and IITM BS.',
+    description: 'Major eSports event for participants across IITM and IITM BS.',
     details:'',
   },
   {
-    name: 'Astra',
+    name: 'Astra Series',
     date: 'September',
     description: 'Major gaming event including competitive and fun games during autumn.',
     details:'',
@@ -57,7 +57,7 @@ const otherEvents = [
   },
   {
     title: 'Gaming Nights',
-    description: 'Fun games once a month to relax away from competitive games and studies.',
+    description: 'Fun games once a month to relax away from competitive games and studies, after exams.',
   },
   {
     title: 'Monthly Scrims',
@@ -66,10 +66,6 @@ const otherEvents = [
   {
     title: 'Gaming Fest',
     description: 'Fun and Competitive games month long event.',
-  },
-  {
-    title: 'Exam Stress Busters',
-    description: 'Fun gaming event post exams to bust exam stress.',
   },
 ];
 

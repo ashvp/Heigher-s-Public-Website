@@ -39,7 +39,7 @@ export function JoinSection() {
             className="text-muted-foreground text-lg mb-10"
           >
             Whether you're a competitive player or a gaming enthusiast, Heighers eSports welcomes everyone who wants 
-            to be part of the IIT Madras BS esports community. Participate in tournaments, help organize events, 
+            to be part of the IIT Madras BS eSports community. Participate in tournaments, help organize events, 
             and contribute to one of the largest student-led gaming platforms in the BS ecosystem.
           </motion.p>
 

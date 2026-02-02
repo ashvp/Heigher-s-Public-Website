@@ -6,7 +6,7 @@
 }
 
 .register-page {
-  background: var(--dark);
+  background: transparent;
   color: white;
   padding: 60px 16px;
   font-family: inherit;

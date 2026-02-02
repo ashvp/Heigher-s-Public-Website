@@ -67,7 +67,7 @@ export function HeroSection() {
         >
           <motion.img 
             src={logo} 
-            alt="Heighers Esports Logo" 
+            alt="Heighers eSports Logo" 
             className="w-32 h-32 md:w-44 md:h-44 mx-auto rounded-full animate-pulse-glow"
             whileHover={{ scale: 1.05, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -94,7 +94,7 @@ export function HeroSection() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Esports
+            eSports
           </motion.span>
         </motion.h1>
 
@@ -105,7 +105,7 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-muted-foreground text-sm md:text-base uppercase tracking-[0.3em] mb-2"
         >
-          IIT Madras BS Official Esports Society
+          IIT Madras BS Official eSports Society
         </motion.p>
 
         {/* Tagline */}

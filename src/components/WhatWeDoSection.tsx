@@ -5,18 +5,18 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 const features = [
   {
     icon: Gamepad2,
-    title: 'Esports Events',
-    description: 'Hosting structured esports tournaments and competitive events across multiple gaming titles with large-scale participation.',
+    title: 'eSports Events',
+    description: 'Hosting structured eSports tournaments and competitive events across multiple gaming titles with large-scale participation.',
   },
   {
     icon: Target,
     title: 'Flagship Competitions',
-    description: 'Organizing major pan-BS esports events that attract hundreds of participants and showcase competitive talent across the ecosystem.',
+    description: 'Organizing major pan-BS eSports events that attract hundreds of participants and showcase competitive talent across the ecosystem.',
   },
   {
     icon: Trophy,
     title: 'Community Platform',
-    description: 'Providing a space for gamers to connect, collaborate, and engage with the esports community beyond individual events.',
+    description: 'Providing a space for gamers to connect, collaborate, and engage with the eSports community beyond individual events.',
   },
   {
     icon: Users,

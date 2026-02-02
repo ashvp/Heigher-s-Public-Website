@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/register.css";
-import { registerUser } from "@/lib/api";
+import { registerUser, checkUserExists } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { auth, googleProvider } from "@/lib/firebase";
 import { signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
@@ -11,6 +11,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const [form, setForm] = useState<any>({
     full_name: "",
@@ -36,14 +37,25 @@ export default function Register() {
 
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         if (!emailRegex.test(currentUser.email || "")) {
           alert("Please sign in with your IITM student email (@*.iitm.ac.in).");
           signOut(auth);
+          setLoading(false);
           return;
         }
+        
+        try {
+          // Check if already registered
+          const status = await checkUserExists(currentUser.uid);
+          if (status.exists) {
+            setIsRegistered(true);
+          }
+        } catch (error) {
+          console.error("Failed to check registration status", error);
+        }
+
         setUser(currentUser);
         // Pre-fill form
         setForm((prev: any) => ({
@@ -53,7 +65,9 @@ export default function Register() {
         }));
       } else {
         setUser(null);
+        setIsRegistered(false);
       }
+      setLoading(false);
     }, (error) => {
       console.error("Auth State Error:", error);
       setLoading(false);
@@ -72,6 +86,7 @@ export default function Register() {
 
   const handleLogout = async () => {
     await signOut(auth);
+    setIsRegistered(false);
     setForm({
       full_name: "",
       age: "",
@@ -161,7 +176,7 @@ export default function Register() {
     try {
       await registerUser(payload);
       alert("Registration successful!");
-      navigate("/");
+      setIsRegistered(true); // Update local state so they see the success message
     } catch (err: any) {
       console.error(err);
       alert(err?.message || "Submission failed");
@@ -170,7 +185,7 @@ export default function Register() {
 
   const [houseOpen, setHouseOpen] = useState(false);
 
-  if (loading) return <div className="register-page"><div className="form-wrapper">Loading...</div></div>;
+  if (loading) return <div className="register-page flex items-center justify-center min-h-[60vh]"><div className="text-xl">Loading...</div></div>;
 
   if (!user) {
     return (
@@ -188,6 +203,28 @@ export default function Register() {
           >
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5 bg-white rounded-full p-0.5" />
             Sign in with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (isRegistered) {
+    return (
+      <div className="register-page flex items-center justify-center min-h-[60vh]">
+        <div className="form-wrapper text-center flex flex-col items-center max-w-md w-full p-8">
+          <h1 className="form-title text-green-500 mb-4">
+            Registration Complete!
+          </h1>
+          <p className="form-sub mb-8 text-lg">
+            You are already a registered member of Heighers eSports Society.
+          </p>
+          <div className="bg-secondary/20 p-4 rounded-lg mb-6 w-full">
+            <p className="text-sm text-muted-foreground">Signed in as:</p>
+            <p className="font-bold text-primary">{user.email}</p>
+          </div>
+          <button onClick={handleLogout} className="text-red-400 hover:underline">
+            Sign Out
           </button>
         </div>
       </div>

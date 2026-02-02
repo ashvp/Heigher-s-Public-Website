@@ -12,5 +12,24 @@ export async function registerUser(data: any) {
     throw error;
   }
 
-  return res.json();
-}
+    return res.json();
+
+  }
+
+  
+
+  export async function checkUserExists(firebaseUid: string) {
+
+    const res = await fetch(`${BASE_URL}/check_user/${firebaseUid}`);
+
+    if (!res.ok) {
+
+      throw new Error("Failed to check user status");
+
+    }
+
+    return res.json();
+
+  }
+
+  
