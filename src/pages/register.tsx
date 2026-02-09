@@ -84,6 +84,10 @@ export default function Register() {
     }
   };
 
+  const handleHomePageNavigation = () => {
+    navigate("/");
+  };
+
   const handleLogout = async () => {
     await signOut(auth);
     setIsRegistered(false);
@@ -223,7 +227,10 @@ export default function Register() {
             <p className="text-sm text-muted-foreground">Signed in as:</p>
             <p className="font-bold text-primary">{user.email}</p>
           </div>
-          <button onClick={handleLogout} className="text-red-400 hover:underline">
+          <button onClick={handleHomePageNavigation} className="submit-btn w-full mb-4">
+            Back to Website
+          </button>
+          <button onClick={handleLogout} className="text-red-400 hover:underline text-sm">
             Sign Out
           </button>
         </div>
