@@ -22,9 +22,11 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/register" element={<Register />} />\
               <Route path="/certificate-demo" element={<CertificateDemo />} />
+              {/* SHOULD ALWAYS BE IN LAST  */}
+              <Route path="*" element={<NotFound />} />
+              
             </Routes>
           </BrowserRouter>
         </div>
