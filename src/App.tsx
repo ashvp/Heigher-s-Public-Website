@@ -7,7 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/register";
 import HoneycombBackground from "./components/HoneycombBackground";
-import CertificatesDemo from "./pages/CertificateDemo";
+import CertificateDemo from "./pages/CertificateDemo";
 
 const queryClient = new QueryClient();
 
@@ -23,9 +23,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/register" element={<Register />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-              <Route path="/certificate-demo" element={<CertificatesDemo />} />
+              <Route path="/certificate-demo" element={<CertificateDemo />} />
             </Routes>
           </BrowserRouter>
         </div>

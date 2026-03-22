@@ -7,7 +7,7 @@ export default function CertificateDemo() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const BASE_URL = "https://heighers-backend.onrender.com";
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   
   const handleGenerate = async () => {
