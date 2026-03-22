@@ -7,7 +7,7 @@ export default function CertificateDemo() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   
   const handleGenerate = async () => {
