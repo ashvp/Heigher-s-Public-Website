@@ -52,7 +52,7 @@ export function ContactSection() {
             className="flex items-center justify-center gap-2 mb-8 text-muted-foreground"
           >
             <Mail className="w-5 h-5" />
-            <a href="mailto:heighers@smail.iitm.ac.in" className="hover:text-primary transition-colors">
+            <a href="mailto:esports.club@study.iitm.ac.in" className="hover:text-primary transition-colors">
               esports.club@study.iitm.ac.in
             </a>
           </motion.div>
