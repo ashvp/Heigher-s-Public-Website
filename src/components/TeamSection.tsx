@@ -4,18 +4,8 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const team = [
   {
-    name: 'Pranav R',
-    role: 'Secretary',
-    image: '/pranav.jpg',
-    socials: {
-      // insta: 'https://www.instagram.com/',
-      linkedin: 'https://www.linkedin.com/in/pranav-r-2689472bb/',
-      mail: 'esports.club@study.iitm.ac.in',
-    },
-  },
-  {
     name: 'Mohit Kishore',
-    role: 'Deputy Secretary',
+    role: 'Secretary',
     image: '/mohit.jpg',
     socials: {
       // insta: 'https://www.instagram.com/',
@@ -25,7 +15,7 @@ const team = [
   },
   {
     name: 'Rachit Agarwal',
-    role: 'Coordinator',
+    role: 'Deputy Secretary',
     image: '/rachit.jpg',
     socials: {
       // insta: 'https://www.instagram.com/',
@@ -40,6 +30,16 @@ const team = [
     socials: {
       // insta: 'https://www.instagram.com/',
       linkedin: 'https://www.linkedin.com/in/divyannshusingh/',
+      mail: 'heighers-core@study.iitm.ac.in',
+    },
+  },
+  {
+    name: 'Prem Pankaj Patel',
+    role: 'Coordinator',
+    image: '/prem.jpeg',
+    socials: {
+      // insta: 'https://www.instagram.com/',
+      linkedin: 'https://www.linkedin.com/in/8a8129324-prem-patel/',
       mail: 'heighers-core@study.iitm.ac.in',
     },
   },
