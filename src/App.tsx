@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound";
 import Register from "./pages/register";
 import HoneycombBackground from "./components/HoneycombBackground";
 import CertificateDemo from "./pages/CertificateDemo";
+import GenerateCertificate from "./pages/GenerateCertificate";
+import WhitelistedRoute from "./components/WhitelistedRoute";
 
 const queryClient = new QueryClient();
 
@@ -22,11 +24,19 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/register" element={<Register />} />\
-              <Route path="/certificate-demo" element={<CertificateDemo />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/certificate-verify" element={<CertificateDemo />} />
+              <Route 
+                path="/certificate-generate" 
+                element={
+                  <WhitelistedRoute>
+                    <GenerateCertificate />
+                  </WhitelistedRoute>
+                } 
+              />
               {/* SHOULD ALWAYS BE IN LAST  */}
               <Route path="*" element={<NotFound />} />
-              
+
             </Routes>
           </BrowserRouter>
         </div>

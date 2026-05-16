@@ -2,63 +2,11 @@ import { useState } from "react";
 
 export default function CertificateDemo() {
   const [certificateId, setCertificateId] = useState("");
-  const [generateData, setGenerateData] = useState<any>(null);
   const [verifyData, setVerifyData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-  
-  const handleGenerate = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      setGenerateData(null);
-
-      let res = await fetch(`${BASE_URL}/certificate/generate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: 6,
-          user_name: "PlayerOne",
-          event_name: "BGMI Tournament",
-          position: "Winner",
-        }),
-      });
-
-      if (!res.ok) {
-        res = await fetch(`${BASE_URL}/certificate/generate`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: 61,
-            user_name: "PlayerOne",
-            event_name: "BGMI Tournament",
-            position: "Winner",
-          }),
-        });
-      }
-
-      const data = await res.json();
-      setGenerateData(data);
-
-     
-      if (data.certificate_id) {
-        setCertificateId(data.certificate_id);
-      }
-
-    } catch (err) {
-      console.error(err);
-      setError("Failed to generate certificate");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleVerify = async () => {
     if (!certificateId.trim()) {
@@ -72,125 +20,103 @@ export default function CertificateDemo() {
       setVerifyData(null);
 
       const res = await fetch(
-        `${BASE_URL}/certificate/verify/${certificateId}`
+        `${BASE_URL.replace(/\/$/, '')}/certificate/verify/${certificateId.trim()}`
       );
 
       const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.detail || "Verification failed");
+      }
+      
       setVerifyData(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Verification failed");
+      setError(err.message || "Verification failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(certificateId);
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-12">
-
-      <div className="max-w-3xl mx-auto text-center mb-16">
-        <h1 className="text-3xl md:text-5xl font-bold mb-4">
-          Generate Your <span className="text-red-500">Certificate</span>
-        </h1>
-
-        <p className="text-gray-400 mb-6">
-          Instantly generate your certificate from events.
-        </p>
-
-        <button
-          onClick={handleGenerate}
-          className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold"
-        >
-          {loading ? "Generating..." : "Generate Now →"}
-        </button>
-
-        {generateData && (
-          <div className="mt-6 p-4 border border-red-500/30 rounded-lg">
-            <p className="text-green-400 mb-2">
-              ✅ Certificate Generated Successfully
-            </p>
-
-            <p className="text-sm text-gray-400">Certificate ID:</p>
-
-            <div className="flex items-center justify-center gap-3 mt-2">
-              <p className="text-lg font-bold text-yellow-400 break-all">
-                {generateData.certificate_id}
-              </p>
-
-              <button
-                onClick={handleCopy}
-                className="text-xs bg-gray-800 px-2 py-1 rounded hover:bg-gray-700"
-              >
-                Copy
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="max-w-3xl mx-auto text-center border border-red-500/30 rounded-xl p-8">
-        <h2 className="text-2xl md:text-4xl font-bold mb-4">
-          Verify <span className="text-red-500">Certificate</span>
+    <div className="min-h-screen bg-black text-white px-6 py-12 flex flex-col items-center justify-center">
+      <div className="max-w-3xl w-full text-center border border-primary/30 rounded-xl p-8 md:p-12 bg-secondary/10 backdrop-blur-sm">
+        <h2 className="text-3xl md:text-5xl font-bold mb-4 font-heading uppercase">
+          Verify <span className="text-primary">Certificate</span>
         </h2>
 
-        <p className="text-gray-400 mb-6">
-          Enter certificate ID to check authenticity.
+        <p className="text-gray-400 mb-8">
+          Enter a certificate ID to check its authenticity and details.
         </p>
 
-        <p className="text-left mb-1 text-sm">
-          Certificate ID <span className="text-red-500">*</span>
-        </p>
+        <div className="text-left max-w-md mx-auto">
+          <p className="mb-2 text-sm font-medium text-gray-300">
+            Certificate ID <span className="text-primary">*</span>
+          </p>
 
-        <input
-          value={certificateId}
-          onChange={(e) => setCertificateId(e.target.value)}
-          placeholder="Enter Certificate ID"
-          className="w-full p-3 mb-4 bg-black border border-red-500/50 text-white rounded"
-        />
+          <input
+            value={certificateId}
+            onChange={(e) => setCertificateId(e.target.value)}
+            placeholder="e.g. CERT-A1B2C3D4-6"
+            className="w-full p-4 mb-6 bg-black border border-primary/50 text-white rounded focus:border-primary outline-none transition-all"
+          />
 
-        <button
-          onClick={handleVerify}
-          className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold"
-        >
-          {loading ? "Checking..." : "Verify →"}
-        </button>
+          <button
+            onClick={handleVerify}
+            disabled={loading}
+            className="w-full bg-primary hover:bg-primary/80 text-black px-6 py-4 rounded-lg font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+          >
+            {loading ? "Verifying..." : "Verify Authenticity →"}
+          </button>
+        </div>
 
-    
         {verifyData && (
-          <div className="mt-6 text-sm border border-red-500/30 rounded-lg p-4 text-left">
+          <div className="mt-10 text-sm border border-primary/30 rounded-lg p-6 text-left bg-black/50">
             {verifyData.is_valid ? (
-              <div className="text-green-400 space-y-1">
-                <p className="font-semibold">✔ Certificate Verified</p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-green-400">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  <p className="font-bold uppercase tracking-wider">✔ Certificate Verified</p>
+                </div>
 
-                <div className="text-gray-300 mt-2 space-y-1">
-                  <p><span className="text-gray-400">Certificate ID:</span> {verifyData.certificate_id}</p>
-                  <p><span className="text-gray-400">User Name:</span> {verifyData.user_name}</p>
-                  <p><span className="text-gray-400">Event:</span> {verifyData.event_name}</p>
-                  <p><span className="text-gray-400">Position:</span> {verifyData.position}</p>
-
-                  {verifyData.issued_at && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300">
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Certificate ID</p>
+                    <p className="font-mono text-primary">{verifyData.certificate_id}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">User Name</p>
+                    <p className="font-semibold">{verifyData.user_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Event</p>
+                    <p className="font-semibold">{verifyData.event_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase">Position</p>
+                    <p className="font-semibold">{verifyData.position || "N/A"}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <p className="text-xs text-gray-500 uppercase">Issued At</p>
                     <p>
-                      <span className="text-gray-400">Issued At:</span>{" "}
-                      {new Date(verifyData.issued_at).toLocaleString()}
+                      {verifyData.issued_at && new Date(verifyData.issued_at).toLocaleString()}
                     </p>
-                  )}
+                  </div>
                 </div>
               </div>
             ) : (
-              <p className="text-red-400">✖ Invalid Certificate</p>
+              <div className="flex items-center gap-2 text-red-400">
+                <div className="w-2 h-2 rounded-full bg-red-400" />
+                <p className="font-bold uppercase tracking-wider">✖ Invalid or Revoked Certificate</p>
+              </div>
             )}
           </div>
         )}
 
         {error && (
-          <p className="mt-4 text-red-400 text-sm">{error}</p>
+          <p className="mt-6 text-red-500 text-sm font-medium">{error}</p>
         )}
       </div>
-
     </div>
   );
 }
