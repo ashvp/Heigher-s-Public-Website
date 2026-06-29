@@ -6,7 +6,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 // Define your whitelist here
 export const WHITELISTED_EMAILS = [
   "23f3000169@ds.study.iitm.ac.in",
-  "moderator@heighers.com",
+  "esports.club@study.iitm.ac.in",
   "test@example.com",
   // Add more emails here
 ];

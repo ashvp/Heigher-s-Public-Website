@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CertificateDemo() {
   const [certificateId, setCertificateId] = useState("");
@@ -8,19 +8,15 @@ export default function CertificateDemo() {
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  const handleVerify = async () => {
-    if (!certificateId.trim()) {
-      setError("Certificate ID is required");
-      return;
-    }
-
+  const verifyCertificateById = async (idToVerify: string) => {
+    if (!idToVerify.trim()) return;
     try {
       setLoading(true);
       setError("");
       setVerifyData(null);
 
       const res = await fetch(
-        `${BASE_URL.replace(/\/$/, '')}/certificate/verify/${certificateId.trim()}`
+        `${BASE_URL.replace(/\/$/, '')}/certificate/verify/${idToVerify.trim()}`
       );
 
       const data = await res.json();
@@ -36,6 +32,23 @@ export default function CertificateDemo() {
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const idParam = params.get("id");
+    if (idParam) {
+      setCertificateId(idParam);
+      verifyCertificateById(idParam);
+    }
+  }, []);
+
+  const handleVerify = async () => {
+    if (!certificateId.trim()) {
+      setError("Certificate ID is required");
+      return;
+    }
+    await verifyCertificateById(certificateId);
   };
 
   return (

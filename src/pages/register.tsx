@@ -412,7 +412,7 @@ export default function Register() {
         <div className="form-card">
           <div className="label">House *</div>
           <p className="form-sub">Fill up below form to know your House and then choose accordingly. </p>
-          <p className="form-link">Form Link: <a href="https://forms.gle/nPNwKNwDyFXbquJL9" target="_blank" rel="noreferrer">https://forms.gle/nPNwKNwDyFXbquJL9</a></p>
+          {/* <p className="form-link">Form Link: <a href="https://forms.gle/nPNwKNwDyFXbquJL9" target="_blank" rel="noreferrer">https://forms.gle/nPNwKNwDyFXbquJL9</a></p> */}
           <div
             className="custom-select"
             onClick={() => setHouseOpen(!houseOpen)}
