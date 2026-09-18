@@ -69,16 +69,16 @@ export function ContactSection() {
                 placeholder="Your Name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-                className="bg-card border-border focus:border-primary"
+                disabled
+                className="bg-card border-border opacity-60 cursor-not-allowed"
               />
               <Input
                 type="email"
                 placeholder="Your Email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-                className="bg-card border-border focus:border-primary"
+                disabled
+                className="bg-card border-border opacity-60 cursor-not-allowed"
               />
             </div>
             <Textarea
@@ -86,14 +86,14 @@ export function ContactSection() {
               rows={5}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              required
-              className="bg-card border-border focus:border-primary resize-none"
+              disabled
+              className="bg-card border-border opacity-60 resize-none cursor-not-allowed"
             />
-            <div className="text-center">
-              <Button type="submit" variant="default" size="lg" className="group">
-                Send Message
-                <Send className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <div className="text-center space-y-3">
+              <Button type="button" variant="default" size="lg" disabled className="opacity-50 cursor-not-allowed">
+                Submissions Closed
               </Button>
+              <p className="text-xs text-muted-foreground">Direct message submissions are closed.</p>
             </div>
           </motion.form>
         </div>

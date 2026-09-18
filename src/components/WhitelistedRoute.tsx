@@ -7,6 +7,7 @@ import { onAuthStateChanged, User } from "firebase/auth";
 export const WHITELISTED_EMAILS = [
   "23f3000169@ds.study.iitm.ac.in",
   "esports.club@study.iitm.ac.in",
+  "moderator@heighers.com",
   "test@example.com",
   // Add more emails here
 ];

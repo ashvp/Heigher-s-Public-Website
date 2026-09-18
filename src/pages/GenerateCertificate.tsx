@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { auth } from "@/lib/firebase";
 import { Search, User, Award, CheckCircle2, Copy, X, Upload, Download, Settings, RefreshCw, Type, Eye } from "lucide-react";
 import QRCode from "qrcode";
+import { Navbar } from "@/components/Navbar";
+import logo from "@/assets/heighers-logo.jpg";
 
 export default function GenerateCertificate() {
   const [generateData, setGenerateData] = useState<any>(null);
@@ -279,8 +281,17 @@ export default function GenerateCertificate() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-8 py-12 flex flex-col items-center">
+    <div className="min-h-screen bg-black text-white px-4 md:px-8 pt-28 pb-12 flex flex-col items-center">
+      <Navbar />
       
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
+        <img src={logo} alt="Heighers eSports" className="w-12 h-12 rounded-full border border-primary/20 shadow-md" />
+        <span className="font-heading font-bold text-xl md:text-2xl uppercase tracking-wide">
+          Heighers<span className="text-primary"> eSports</span>
+        </span>
+      </div>
+
       {/* Title */}
       <div className="max-w-5xl w-full text-center mb-10">
         <div className="inline-block p-3 rounded-2xl bg-primary/10 mb-4 border border-primary/20">

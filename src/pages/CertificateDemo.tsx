@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Navbar } from "@/components/Navbar";
+import logo from "@/assets/heighers-logo.jpg";
 
 export default function CertificateDemo() {
   const [certificateId, setCertificateId] = useState("");
@@ -52,8 +54,18 @@ export default function CertificateDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-12 flex flex-col items-center justify-center">
-      <div className="max-w-3xl w-full text-center border border-primary/30 rounded-xl p-8 md:p-12 bg-secondary/10 backdrop-blur-sm">
+    <div className="min-h-screen bg-black text-white px-6 pt-28 pb-12 flex flex-col items-center">
+      <Navbar />
+
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-top-4 duration-300">
+        <img src={logo} alt="Heighers eSports" className="w-12 h-12 rounded-full border border-primary/20 shadow-md" />
+        <span className="font-heading font-bold text-xl md:text-2xl uppercase tracking-wide">
+          Heighers<span className="text-primary"> eSports</span>
+        </span>
+      </div>
+
+      <div className="max-w-3xl w-full text-center border border-primary/30 rounded-xl p-8 md:p-12 bg-secondary/10 backdrop-blur-sm shadow-xl">
         <h2 className="text-3xl md:text-5xl font-bold mb-4 font-heading uppercase">
           Verify <span className="text-primary">Certificate</span>
         </h2>

@@ -11,7 +11,7 @@ export function Footer() {
               <span className="font-heading font-bold text-lg">
                 Heighers <span className="text-primary">eSports</span>
               </span>
-              <p className="text-muted-foreground text-xs transition-all duration-300 hover:text-primary hover:drop-shadow-[0_0_8px_hsl(var(--primary))] cursor-default">IIT Madras</p>
+              <p className="text-muted-foreground text-xs transition-all duration-300 hover:text-primary hover:drop-shadow-[0_0_8px_hsl(var(--primary))] cursor-default">Ex official eSports society of IITM BS</p>
             </div>
           </div>
 
@@ -20,7 +20,7 @@ export function Footer() {
               Agility • Precision • Skill
             </p>
             <p className="text-muted-foreground text-xs mt-1 transition-all duration-300 hover:text-primary hover:drop-shadow-[0_0_8px_hsl(var(--primary))] cursor-default">
-              © {new Date().getFullYear()} Heighers eSports. All rights reserved.
+              © 2021 - 2026 Heighers eSports. All rights reserved.
             </p>
             <p className="text-muted-foreground text-xs mt-1 transition-all duration-300 hover:text-primary hover:drop-shadow-[0_0_8px_hsl(var(--primary))] cursor-default">
               Credits: Ashwin | Ankush | Srivalli

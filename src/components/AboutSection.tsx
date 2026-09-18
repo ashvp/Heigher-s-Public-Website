@@ -33,10 +33,9 @@ export function AboutSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8"
           >
-            Heighers eSports is the official eSports and competitive gaming
-            society of IIT Madras BS. We organize large-scale tournaments and
-            competitive events that bring together gamers from across the BS
-            ecosystem.
+            Heighers eSports is the Ex official eSports society of IITM BS.
+            We organize large-scale tournaments and competitive events that
+            bring together gamers from across the BS ecosystem.
           </motion.p>
 
           <motion.p

@@ -250,9 +250,12 @@ export default function Register() {
           </button>
         </div>
         
+        <div className="p-3 mb-4 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm text-center font-medium">
+          New member registrations are currently closed.
+        </div>
         <p className="form-sub">
           Welcome, <strong>{user.displayName}</strong>! <br/>
-          Fill this form to become a member of Heighers eSports Club.
+          Heighers eSports membership registrations are closed.
         </p>
         <p className="form-link">Our Socials: <a href=" https://linktr.ee/heighers.esports_iitm">https://linktr.ee/heighers.esports_iitm</a></p>
         <p className="required-note">* Indicates required question</p>
@@ -542,8 +545,8 @@ export default function Register() {
           </label>
         </div>
 
-        <button className="submit-btn" onClick={submit}>
-          Submit Registration
+        <button className="submit-btn opacity-50 cursor-not-allowed" disabled>
+          Registrations Closed
         </button>
       </div>
     </div>

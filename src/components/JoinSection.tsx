@@ -48,11 +48,8 @@ export function JoinSection() {
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Button variant="default" size="xl" className="group" asChild>
-              <Link to="/register">
-                Apply Now
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Link>
+            <Button variant="default" size="xl" disabled className="opacity-50 cursor-not-allowed">
+              Applications Closed
             </Button>
           </motion.div>
         </div>

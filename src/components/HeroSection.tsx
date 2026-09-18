@@ -105,7 +105,7 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-muted-foreground text-sm md:text-base uppercase tracking-[0.3em] mb-2"
         >
-          IIT Madras BS Official eSports Society
+          Ex official eSports society of IITM BS
         </motion.p>
 
         {/* Tagline */}
@@ -137,11 +137,11 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 1 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="default" size="xl" asChild>
-              <a href="#join">Join Us</a>
+          <div>
+            <Button variant="default" size="xl" disabled className="opacity-50 cursor-not-allowed">
+              Join Us (Closed)
             </Button>
-          </motion.div>
+          </div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button variant="hero" size="xl" asChild>
               <a href="#events">View Events</a>
